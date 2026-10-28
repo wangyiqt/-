@@ -101,7 +101,7 @@ button { cursor: pointer; }
 
 .nav {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   margin: 22px 0;
 }
@@ -244,6 +244,19 @@ textarea, .share-view {
   border-left: 1px solid var(--gold);
   padding-left: 14px;
   margin: 8px 0 0;
+}
+
+.confirm {
+  border: 1px solid var(--gold);
+  padding: 14px;
+  margin: 12px 0;
+}
+
+.secret {
+  width: 100%;
+  background: #090909;
+  border: 1px solid var(--line);
+  padding: 12px;
 }
 
 .logs { margin-top: 18px; }

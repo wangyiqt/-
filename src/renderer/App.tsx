@@ -15,9 +15,10 @@ import {
   type TakeoverPlan,
   type Workflow,
 } from '../core/index.ts'
-import { copyText, downloadText, getBridge } from './bridge.ts'
+import { copyText, downloadText, getBridge, type RunRequest } from './bridge.ts'
+import { RunPane, SessionsPane, SettingsPane } from './pages.tsx'
 
-type Screen = 'analyze' | 'takeover' | 'live' | 'share'
+type Screen = 'sessions' | 'run' | 'analyze' | 'takeover' | 'live' | 'share' | 'settings'
 type ProviderChoice = ProviderId | 'auto'
 
 const STORAGE_KEY = 'wangzi.workflow.v1'
@@ -25,10 +26,11 @@ const KIND_LABEL = { prompt: '任务', tool: '工具', result: '结果', decisio
 const STATUS_LABEL = { idle: '等待', pending: '等待', running: '进行中', succeeded: '完成', failed: '失败', skipped: '跳过' }
 
 const NAV: Array<{ id: Screen; index: string; label: string; hint: string }> = [
-  { id: 'analyze', index: '01', label: '分析', hint: '读入记录' },
-  { id: 'takeover', index: '02', label: '接管', hint: '从某一步接手' },
-  { id: 'live', index: '03', label: '执行', hint: '实时回放' },
-  { id: 'share', index: '04', label: '分享', hint: '导出与导入' },
+  { id: 'sessions', index: '01', label: '会话', hint: '本机记录' },
+  { id: 'run', index: '02', label: '运行', hint: '直接接手' },
+  { id: 'analyze', index: '03', label: '分析', hint: '贴记录' },
+  { id: 'share', index: '04', label: '分享', hint: '导出导入' },
+  { id: 'settings', index: '05', label: '设置', hint: '密钥和命令' },
 ]
 
 function providerLabel(id: ProviderId): string {
@@ -36,7 +38,8 @@ function providerLabel(id: ProviderId): string {
 }
 
 export function App() {
-  const [screen, setScreen] = useState<Screen>('analyze')
+  const [screen, setScreen] = useState<Screen>('sessions')
+  const [runRequest, setRunRequest] = useState<RunRequest | null>(null)
   const [draft, setDraft] = useState('')
   const [providerChoice, setProviderChoice] = useState<ProviderChoice>('auto')
   const [workflow, setWorkflow] = useState<Workflow | null>(null)
@@ -186,7 +189,7 @@ export function App() {
         <header className="top">
           <div>
             <h1 className="brand">王子</h1>
-            <p className="lede">分析、接管、分享 Agent 工作流</p>
+            <p className="lede">查看会话，直接接手，不用来回粘贴</p>
           </div>
           <div className="version">
             {APP_VERSION}
@@ -201,9 +204,16 @@ export function App() {
             </button>
           ))}
         </nav>
+        <div className="actions">
+          <button type="button" className={screen === 'takeover' ? 'gold' : 'ghost'} onClick={() => setScreen('takeover')}>接管已有记录</button>
+          <button type="button" className={screen === 'live' ? 'gold' : 'ghost'} onClick={() => setScreen('live')}>只回放</button>
+        </div>
         {error ? <p className="banner error">{error}</p> : null}
         {notice && !error ? <p className="banner notice">{notice}</p> : null}
         <section className="panel">
+          {screen === 'sessions' ? <SessionsPane onTakeover={(request) => { setRunRequest(request); setScreen('run') }} /> : null}
+          {screen === 'run' ? <RunPane request={runRequest} /> : null}
+          {screen === 'settings' ? <SettingsPane /> : null}
           {screen === 'analyze' ? (
             <AnalyzePane
               draft={draft}

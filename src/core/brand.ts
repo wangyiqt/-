@@ -1,5 +1,6 @@
 export const APP_SIGNATURE = '王子' as const
-export const APP_VERSION = '0.3.0' as const
+export const APP_VERSION = '0.4.0' as const
+export const SHARE_VERSIONS = ['0.3.0', '0.4.0'] as const
 export const SHARE_FORMAT = 'wangzi-share' as const
 
 export const theme = {

@@ -1,4 +1,5 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { registerServices } from './services.ts'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -60,6 +61,7 @@ if (!gotLock) {
   app.quit()
 } else {
   app.whenReady().then(() => {
+    registerServices()
     createWindow()
     app.on('second-instance', () => {
       const [window] = BrowserWindow.getAllWindows()

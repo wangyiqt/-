@@ -1,6 +1,6 @@
 {
   "name": "wangzi",
-  "version": "0.3.0",
+    "version": "0.4.0",
   "private": true,
   "description": "Analyze, take over, and share AI agent workflows",
   "author": "wangyiqt",
@@ -14,7 +14,7 @@
     "build:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --outfile=dist/preload/index.cjs --external:electron",
     "build": "npm run build:renderer && npm run build:main && npm run build:preload && node scripts/copy-icon.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test tests/core.test.ts",
+    "test": "node --import tsx --test tests/core.test.ts tests/control.test.ts",
     "start": "npm run build && electron .",
     "dist:win": "electron-builder --win nsis msi",
     "dist:mac": "electron-builder --mac dmg --x64 --arm64",

@@ -1,4 +1,4 @@
-import { APP_SIGNATURE, APP_VERSION, SHARE_FORMAT } from './brand.ts'
+import { APP_SIGNATURE, APP_VERSION, SHARE_FORMAT, SHARE_VERSIONS } from './brand.ts'
 import { sha256 } from './sha256.ts'
 import type { RunEvent, ShareDocument, Workflow } from './types.ts'
 
@@ -68,7 +68,7 @@ export function exportShare(workflow: Workflow): ShareDocument {
 function isShareShape(value: unknown): value is ShareDocument {
   if (!value || typeof value !== 'object') return false
   const doc = value as Partial<ShareDocument>
-  return doc.format === SHARE_FORMAT && doc.signature === APP_SIGNATURE && doc.version === APP_VERSION && !!doc.workflow
+  return doc.format === SHARE_FORMAT && doc.signature === APP_SIGNATURE && !!doc.version && (SHARE_VERSIONS as readonly string[]).includes(doc.version) && !!doc.workflow
 }
 
 export function importShare(input: ShareDocument | string): Workflow {

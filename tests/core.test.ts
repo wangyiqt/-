@@ -42,7 +42,7 @@ function workflow(): Workflow {
     title: '登录超时',
     provider: 'codex',
     signature: '王子',
-    version: '0.3.0',
+    version: '0.4.0',
     createdAt: NOW,
     steps: [step('s1', '看日志', 'prompt'), step('s2', '跑测试', 'tool', 'shell'), step('s3', '给出结论', 'result')],
   }
@@ -72,9 +72,9 @@ test('unknown provider id is rejected', () => {
   assert.throws(() => getProvider('gpt'), /未知的 Agent：gpt/)
 })
 
-test('signature constant is 王子 and version is 0.3.0', () => {
+test('signature constant is 王子 and version is 0.4.0', () => {
   assert.equal(APP_SIGNATURE, '王子')
-  assert.equal(APP_VERSION, '0.3.0')
+  assert.equal(APP_VERSION, '0.4.0')
 })
 
 test('analyzes a Codex jsonl transcript into ordered steps', () => {
@@ -84,7 +84,7 @@ test('analyzes a Codex jsonl transcript into ordered steps', () => {
   assert.equal(result.workflow.steps[1]?.tool, 'shell')
   assert.match(result.workflow.steps[0]?.input ?? '', /登录有时会超时/)
   assert.equal(result.workflow.signature, '王子')
-  assert.equal(result.workflow.version, '0.3.0')
+  assert.equal(result.workflow.version, '0.4.0')
   assert.equal(analyzeTranscript(sampleById('codex').text, { now: NOW }).workflow.id, result.workflow.id)
 })
 
@@ -178,10 +178,10 @@ test('takeover plan steps start as pending', () => {
   assert.equal(plan.history[0]?.status, 'succeeded')
 })
 
-test('share document carries 王子 signature and format version 0.3.0', () => {
+test('share document carries 王子 signature and format version 0.4.0', () => {
   const doc = exportShare(workflow())
   assert.equal(doc.signature, '王子')
-  assert.equal(doc.version, '0.3.0')
+  assert.equal(doc.version, '0.4.0')
   assert.equal(doc.format, 'wangzi-share')
   assert.equal(doc.workflow.signature, '王子')
 })

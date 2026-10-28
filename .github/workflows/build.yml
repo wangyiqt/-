@@ -149,15 +149,17 @@ jobs:
             这个版本可以分析、接管并分享 Codex、Claude Code、DeepSeek 和 Kimi 的工作流，并在本机实时回放执行过程。
 
             Windows 10 / 11（64 位）
-            - Wangzi-0.3.0-win-x64.exe
-            - Wangzi-0.3.0-win-x64.msi
+            - Wangzi-0.4.0-win-x64.exe
+            - Wangzi-0.4.0-win-x64.msi
 
             macOS
-            - Wangzi-0.3.0-mac-x64.dmg（Intel）
-            - Wangzi-0.3.0-mac-arm64.dmg（Apple 芯片）
+            - Wangzi-0.4.0-mac-x64.dmg（Intel）
+            - Wangzi-0.4.0-mac-arm64.dmg（Apple 芯片）
 
             Linux
-            - Wangzi-0.3.0-linux-x86_64.AppImage
-            - Wangzi-0.3.0-linux-amd64.deb
+            - Wangzi-0.4.0-linux-x86_64.AppImage
+            - Wangzi-0.4.0-linux-amd64.deb
+
+            0.4.0 可以直接打开本机的 Claude Code 和 Codex 会话，并在王子里运行、暂停、停止和补充说明。危险命令会先询问。DeepSeek 和 Kimi 的密钥保存在这台电脑的系统钥匙串里。
 
             安装包没有做代码签名。Windows 若出现蓝色拦截，请点「更多信息」，再点「仍要运行」。macOS 若提示无法打开，请按住 Control 再点应用图标，选择「打开」。

@@ -20,7 +20,7 @@ export interface Workflow {
   title: string
   provider: ProviderId
   signature: '王子'
-  version: '0.3.0'
+  version: '0.3.0' | '0.4.0'
   createdAt: string
   steps: WorkflowStep[]
   execution?: RunEvent[]
@@ -58,7 +58,7 @@ export interface RunSnapshot {
 
 export interface ShareDocument {
   format: 'wangzi-share'
-  version: '0.3.0'
+  version: '0.3.0' | '0.4.0'
   signature: '王子'
   workflow: Workflow
   checksum: string

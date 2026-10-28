@@ -1,7 +1,49 @@
+export interface SessionSummary {
+  id: string
+  provider: 'claude-code' | 'codex'
+  title: string
+  filePath: string
+  cwd: string
+  updatedAt: string
+  resumeId: string
+}
+
+export interface CliState {
+  name: 'claude' | 'codex'
+  installed: boolean
+  bin: string
+}
+
+export interface RunRequest {
+  provider: 'claude-code' | 'codex' | 'deepseek' | 'kimi'
+  prompt: string
+  cwd: string
+  resumeId?: string
+}
+
+export interface RunEventMessage {
+  type: 'log' | 'status' | 'confirm' | 'blocked' | 'exit' | 'error'
+  text?: string
+  status?: string
+  command?: string
+  code?: number
+}
+
 export interface WangziBridge {
   platform: string
   saveText: (defaultName: string, text: string) => Promise<string | null>
   openText: () => Promise<string | null>
+  listSessions: () => Promise<SessionSummary[]>
+  readSession: (filePath: string) => Promise<{ text: string; updatedAt: string }>
+  cliStatus: () => Promise<{ claude: CliState; codex: CliState; platform: string }>
+  pickFolder: () => Promise<string | null>
+  startRun: (request: RunRequest) => Promise<boolean>
+  controlRun: (action: string, text?: string) => Promise<string>
+  secretStatus: () => Promise<{ deepseek: boolean; kimi: boolean; encryption: boolean }>
+  saveSecret: (provider: 'deepseek' | 'kimi', value: string) => Promise<boolean>
+  clearSecret: (provider: 'deepseek' | 'kimi') => Promise<boolean>
+  onSessions: (callback: (sessions: SessionSummary[]) => void) => () => void
+  onRunEvent: (callback: (event: RunEventMessage) => void) => () => void
 }
 
 export function getBridge(): WangziBridge | null {

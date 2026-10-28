@@ -1,9 +1,10 @@
 import fs from 'node:fs'
 
+const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version
 const expected = {
-  windows: ['Wangzi-0.3.0-win-x64.exe', 'Wangzi-0.3.0-win-x64.msi'],
-  macos: ['Wangzi-0.3.0-mac-x64.dmg', 'Wangzi-0.3.0-mac-arm64.dmg'],
-  linux: ['Wangzi-0.3.0-linux-x86_64.AppImage', 'Wangzi-0.3.0-linux-amd64.deb'],
+  windows: [`Wangzi-${version}-win-x64.exe`, `Wangzi-${version}-win-x64.msi`],
+  macos: [`Wangzi-${version}-mac-x64.dmg`, `Wangzi-${version}-mac-arm64.dmg`],
+  linux: [`Wangzi-${version}-linux-x86_64.AppImage`, `Wangzi-${version}-linux-amd64.deb`],
 }
 
 const target = process.argv[2]
