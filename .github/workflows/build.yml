@@ -106,7 +106,11 @@ jobs:
       - run: npm run build
       - name: Package
         shell: bash
-        run: npx electron-builder --mac dmg --x64 --arm64 --publish never
+        run: |
+          hdiutil detach "/Volumes/Wangzi 0.4.0" || true
+          npx electron-builder --mac dmg --x64 --publish never
+          hdiutil detach "/Volumes/Wangzi 0.4.0" || true
+          npx electron-builder --mac dmg --arm64 --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
       - name: Check artifact names
