@@ -32,9 +32,6 @@ jobs:
   package:
     name: package (${{ matrix.target }})
     needs: test
-    # This account's macOS runners are cancelled after 15 minutes in the queue.
-    # Tags still build the dmg installers. Other pushes package Windows and Linux.
-    if: matrix.target != 'macos' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     strategy:
@@ -47,9 +44,6 @@ jobs:
           - os: windows-latest
             target: windows
             args: --win nsis msi
-          - os: macos-latest
-            target: macos
-            args: --mac dmg --x64 --arm64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -90,9 +84,43 @@ jobs:
             release/*.AppImage
             release/*.deb
 
+  package-macos:
+    name: package (macos)
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/electron
+            ~/Library/Caches/electron-builder
+          key: electron-mac-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run build
+      - name: Package
+        shell: bash
+        run: npx electron-builder --mac dmg --x64 --arm64 --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - name: Check artifact names
+        shell: bash
+        run: node scripts/expect-artifacts.mjs macos
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wangzi-macos
+          if-no-files-found: error
+          path: release/*.dmg
+
   release:
     name: release
-    needs: package
+    needs: [package, package-macos]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
