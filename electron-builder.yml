@@ -1,0 +1,49 @@
+appId: app.wangzi.desktop
+productName: 王子
+executableName: wangzi
+copyright: Copyright © 2026 wangyiqt
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - package.json
+asar: true
+npmRebuild: false
+compression: normal
+artifactName: Wangzi-${version}-${os}-${arch}.${ext}
+win:
+  target:
+    - nsis
+    - msi
+  artifactName: Wangzi-${version}-win-${arch}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: 王子
+  uninstallDisplayName: 王子
+msi:
+  oneClick: false
+mac:
+  category: public.app-category.developer-tools
+  identity: null
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  artifactName: Wangzi-${version}-mac-${arch}.${ext}
+dmg:
+  title: 王子 ${version}
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  maintainer: wangyiqt
+  synopsis: 分析、接管并分享 AI Agent 工作流
+  artifactName: Wangzi-${version}-linux-${arch}.${ext}
+  executableName: wangzi

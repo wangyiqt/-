@@ -1,0 +1,131 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+
+  package:
+    name: package (${{ matrix.target }})
+    needs: test
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+            args: --linux AppImage deb
+          - os: windows-latest
+            target: windows
+            args: --win nsis msi
+          - os: macos-latest
+            target: macos
+            args: --mac dmg --x64 --arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install Linux packaging tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+            ~/Library/Caches/electron
+            ~/Library/Caches/electron-builder
+            ~/AppData/Local/electron/Cache
+            ~/AppData/Local/electron-builder/Cache
+          key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run build
+      - name: Package
+        shell: bash
+        run: npx electron-builder ${{ matrix.args }}
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - name: Check artifact names
+        shell: bash
+        run: node scripts/expect-artifacts.mjs ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wangzi-${{ matrix.target }}
+          if-no-files-found: error
+          path: |
+            release/*.exe
+            release/*.msi
+            release/*.dmg
+            release/*.AppImage
+            release/*.deb
+
+  release:
+    name: release
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wangzi-*
+          merge-multiple: true
+          path: release
+      - name: List release files
+        run: ls -la release
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: 王子 ${{ github.ref_name }}
+          fail_on_unmatched_files: true
+          files: |
+            release/*.exe
+            release/*.msi
+            release/*.dmg
+            release/*.AppImage
+            release/*.deb
+          body: |
+            王子 ${{ github.ref_name }}
+
+            这个版本可以分析、接管并分享 Codex、Claude Code、DeepSeek 和 Kimi 的工作流，并在本机实时回放执行过程。
+
+            Windows 10 / 11（64 位）
+            - Wangzi-0.3.0-win-x64.exe
+            - Wangzi-0.3.0-win-x64.msi
+
+            macOS
+            - Wangzi-0.3.0-mac-x64.dmg（Intel）
+            - Wangzi-0.3.0-mac-arm64.dmg（Apple 芯片）
+
+            Linux
+            - Wangzi-0.3.0-linux-x86_64.AppImage
+            - Wangzi-0.3.0-linux-amd64.deb
+
+            安装包没有做代码签名。Windows 若出现蓝色拦截，请点「更多信息」，再点「仍要运行」。macOS 若提示无法打开，请按住 Control 再点应用图标，选择「打开」。

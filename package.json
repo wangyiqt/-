@@ -1,0 +1,37 @@
+{
+  "name": "wangzi",
+  "version": "0.3.0",
+  "private": true,
+  "description": "分析、接管并分享 AI Agent 工作流",
+  "author": "wangyiqt",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build:renderer": "vite build",
+    "build:main": "esbuild src/main/index.ts --bundle --platform=node --format=esm --outfile=dist/main/index.js --external:electron",
+    "build:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --outfile=dist/preload/index.cjs --external:electron",
+    "build": "npm run build:renderer && npm run build:main && npm run build:preload && node scripts/copy-icon.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/core.test.ts",
+    "start": "npm run build && electron .",
+    "dist:win": "electron-builder --win nsis msi",
+    "dist:mac": "electron-builder --mac dmg --x64 --arm64",
+    "dist:linux": "electron-builder --linux AppImage deb"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
+    "esbuild": "^0.25.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}
