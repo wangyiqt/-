@@ -1,5 +1,5 @@
 appId: app.wangzi.desktop
-productName: 王子
+productName: Wangzi
 executableName: wangzi
 copyright: Copyright © 2026 wangyiqt
 directories:
@@ -21,8 +21,8 @@ nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
-  shortcutName: 王子
-  uninstallDisplayName: 王子
+  shortcutName: Wangzi
+  uninstallDisplayName: Wangzi
 msi:
   oneClick: false
 mac:
@@ -37,7 +37,7 @@ mac:
         - arm64
   artifactName: Wangzi-${version}-mac-${arch}.${ext}
 dmg:
-  title: 王子 ${version}
+  title: Wangzi ${version}
 linux:
   target:
     - AppImage

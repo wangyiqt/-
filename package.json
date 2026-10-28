@@ -2,7 +2,7 @@
   "name": "wangzi",
   "version": "0.3.0",
   "private": true,
-  "description": "分析、接管并分享 AI Agent 工作流",
+  "description": "Analyze, take over, and share AI agent workflows",
   "author": "wangyiqt",
   "license": "UNLICENSED",
   "type": "module",
