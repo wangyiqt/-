@@ -32,6 +32,9 @@ jobs:
   package:
     name: package (${{ matrix.target }})
     needs: test
+    # This account's macOS runners are cancelled after 15 minutes in the queue.
+    # Tags still build the dmg installers. Other pushes package Windows and Linux.
+    if: matrix.target != 'macos' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     strategy:
